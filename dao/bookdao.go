@@ -24,3 +24,15 @@ func GetBooks() ([]*model.Book, error) {
 	}
 	return books, nil
 }
+
+// AddBook 向数据库中添加一本图书
+func AddBook(b *model.Book) error {
+	//写sql
+	sqlStr := "insert into books(title,author,price,sales,stock,img_path) values(?,?,?,?,?,?)"
+	//执行sql
+	_, err := utils.Db.Exec(sqlStr,b.Title,b.Author,b.Price,b.Sales,b.Stock,b.ImgPath)
+	if err != nil {
+		return err
+	}
+	return nil
+}
