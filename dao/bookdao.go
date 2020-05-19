@@ -36,3 +36,15 @@ func AddBook(b *model.Book) error {
 	}
 	return nil
 }
+
+//DeleteBook 根据图书的id从数据库中删除图书
+func DeleteBook(bookID string) error {
+	//写sql
+	sqlStr := "delete from books where id = ?"
+	//执行
+	_, err := utils.Db.Exec(sqlStr, bookID)
+	if err != nil {
+		return err
+	}
+	return nil
+}
