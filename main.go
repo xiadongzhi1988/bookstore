@@ -30,5 +30,9 @@ func main() {
 	http.HandleFunc("/addBook", controller.AddBook)
 	//删除图书
 	http.HandleFunc("/deleteBook", controller.DeleteBook)
+	//去更新图书的页面
+	http.HandleFunc("/toUpdateBookPage", controller.ToUpdateBookPage)
+	//更新图书
+	http.HandleFunc("/updateBook", controller.UpdateBook)
 	http.ListenAndServe(":8080", nil)
 }

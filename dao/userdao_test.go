@@ -33,8 +33,10 @@ func testSave(t *testing.T)  {
 func TestBook(t *testing.T)  {
 	fmt.Println("测试bookdao中的相关函数")
 	//t.Run("测试获取所有图书", testGetBooks)
-	t.Run("测试添加图书", testAddBook)
-	t.Run("测试删除图书", testDeleteBook)
+	//t.Run("测试添加图书", testAddBook)
+	//t.Run("测试删除图书", testDeleteBook)
+	//t.Run("测试获取一本图书", testGetBook)
+	t.Run("测试更新图书", testUpdateBook)
 }
 
 func testGetBooks(t *testing.T)  {
@@ -62,4 +64,24 @@ func testDeleteBook(t *testing.T)  {
 
 	//调用删除图书函数
 	DeleteBook("36")
+}
+
+func testGetBook(t *testing.T)  {
+	//调用获取图书的函数
+	book, _ := GetBookByID("30")
+	fmt.Println("获取的图书信息是: ", book)
+}
+
+func testUpdateBook(t *testing.T)  {
+	book := &model.Book{
+		Id: 34,
+		Title: "3个女人与105个男人的故事",
+		Author: "罗贯中",
+		Price: 66.6,
+		Sales: 10000,
+		Stock: 1,
+		ImgPath: "/static/img/default.jpg",
+	}
+	//调用更新图书的函数
+	UpdateBook(book)
 }
