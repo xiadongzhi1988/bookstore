@@ -18,32 +18,32 @@ func GetBooks(w http.ResponseWriter, r *http.Request)  {
 	t.Execute(w, books)
 }
 // AddBook添加图书
-func AddBook(w http.ResponseWriter, r *http.Request)  {
-	//获取图书信息
-	title := r.PostFormValue("title")
-	author := r.PostFormValue("author")
-	price := r.PostFormValue("price")
-	sales := r.PostFormValue("sales")
-	stock := r.PostFormValue("stock")
-	//将价格,销量,库存转换
-	fPrice, _ := strconv.ParseFloat(price,64)
-	iSales, _ := strconv.ParseInt(sales, 10, 0)
-	iStock, _ := strconv.ParseInt(stock, 10, 0)
-	//创建Book
-	book := &model.Book{
-		Title: title,
-		Author: author,
-		Price: fPrice,
-		Sales: int(iSales),
-		Stock: int(iStock),
-		ImgPath: "/static/img/default.jpg",
-	}
-	//调用bookdao中添加图书的函数
-	dao.AddBook(book)
-	//调用GetBooks函数再查询一次
-	GetBooks(w, r)
-
-}
+//func AddBook(w http.ResponseWriter, r *http.Request)  {
+//	//获取图书信息
+//	title := r.PostFormValue("title")
+//	author := r.PostFormValue("author")
+//	price := r.PostFormValue("price")
+//	sales := r.PostFormValue("sales")
+//	stock := r.PostFormValue("stock")
+//	//将价格,销量,库存转换
+//	fPrice, _ := strconv.ParseFloat(price,64)
+//	iSales, _ := strconv.ParseInt(sales, 10, 0)
+//	iStock, _ := strconv.ParseInt(stock, 10, 0)
+//	//创建Book
+//	book := &model.Book{
+//		Title: title,
+//		Author: author,
+//		Price: fPrice,
+//		Sales: int(iSales),
+//		Stock: int(iStock),
+//		ImgPath: "/static/img/default.jpg",
+//	}
+//	//调用bookdao中添加图书的函数
+//	dao.AddBook(book)
+//	//调用GetBooks函数再查询一次
+//	GetBooks(w, r)
+//
+//}
 
 // DeleteBook 删除图书
 func DeleteBook(w http.ResponseWriter, r *http.Request)  {
@@ -56,20 +56,30 @@ func DeleteBook(w http.ResponseWriter, r *http.Request)  {
 
 }
 
-// ToUpdateBookPage 去更新图书的页面
+// ToUpdateBookPage 去更新或添加图书的页面
 func ToUpdateBookPage(w http.ResponseWriter, r *http.Request)  {
 	//获取要更新的图书的id
 	bookID := r.FormValue("bookId")
 	//调用bookdao中获取图书函数
 	book, _ := dao.GetBookByID(bookID)
-	//解析模板
-	t := template.Must(template.ParseFiles("views/pages/manager/book_modify.html"))
-	//执行
-	t.Execute(w, book)
+	if book.Id > 0 {
+		//在更新图书
+		//解析模板
+		t := template.Must(template.ParseFiles("views/pages/manager/book_edit.html"))
+		//执行
+		t.Execute(w, book)
+	} else {
+		//添加图书
+		//解析模板
+		t := template.Must(template.ParseFiles("views/pages/manager/book_edit.html"))
+		//执行
+		t.Execute(w, "")
+	}
+
 }
 
-// UpdateBook 更新图书
-func UpdateBook(w http.ResponseWriter, r *http.Request)  {
+// UpdateOrAddBook 更新或添加图书
+func UpdateOrAddBook(w http.ResponseWriter, r *http.Request)  {
 	//获取图书信息
 	bookId := r.PostFormValue("bookId")
 	title := r.PostFormValue("title")
@@ -92,8 +102,15 @@ func UpdateBook(w http.ResponseWriter, r *http.Request)  {
 		Stock: int(iStock),
 		ImgPath: "/static/img/default.jpg",
 	}
-	//调用bookdao中更新图书的函数
-	dao.UpdateBook(book)
+	if book.Id > 0 {
+		//在更新图书
+		//调用bookdao中更新图书的函数
+		dao.UpdateBook(book)
+	} else {
+		//在添加图书
+		//调用bookdao中添加图书函数
+		dao.AddBook(book)
+	}
 	//调用GetBooks函数再查询一次
 	GetBooks(w, r)
 }
