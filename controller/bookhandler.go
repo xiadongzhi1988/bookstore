@@ -8,6 +8,21 @@ import (
 	"strconv"
 )
 
+// IndexHandler  去首页
+func IndexHandler(w http.ResponseWriter, r *http.Request)  {
+	//获取页码
+	pageNo := r.FormValue("pageNo")
+	if pageNo == "" {
+		pageNo = "1"
+	}
+	//调用bookdao中获取带分页的图书函数
+	page, _ := dao.GetPageBooks(pageNo)
+	//解析模板
+	t := template.Must(template.ParseFiles("views/index.html"))
+	//执行
+	t.Execute(w, page)
+}
+
 //GetBooks 获取所有图书
 //func GetBooks(w http.ResponseWriter, r *http.Request)  {
 //	//调用bookdao中获取所有图书的函数
