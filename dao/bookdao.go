@@ -3,6 +3,7 @@ package dao
 import (
 	"bookstore0612/model"
 	"bookstore0612/utils"
+	"strconv"
 )
 
 // GetBooks 获取数据库中所有的图书
@@ -72,4 +73,49 @@ func UpdateBook(b *model.Book) error {
 		return err
 	}
 	return nil
+}
+
+//GetPageBooks 获取带分页的图书信息
+func GetPageBooks(pageNo string) (*model.Page, error) {
+	//将页码转换为int64
+	iPageNo , _ := strconv.ParseInt(pageNo, 10, 64)
+	//获取数据库中图书的总记录数
+	sqlStr := "select count(*) from books"
+	//设置一个变量接收总记录数
+	var totalRecord int64
+	//执行
+	row := utils.Db.QueryRow(sqlStr)
+	row.Scan(&totalRecord)
+	//设置每页只显示4条记录
+	var pageSize int64 = 4
+	//获取总页数
+	var totalPageNo int64
+	if totalRecord % pageSize == 0 {
+		totalPageNo = totalRecord / pageSize
+	} else {
+		totalPageNo = totalRecord / pageSize + 1
+	}
+	//获取当前页中的图书
+	sqlStr2 := "select id,title,author,price,sales,stock,img_path from books limit ?,?"
+	//执行
+	rows, err := utils.Db.Query(sqlStr2, (iPageNo - 1)*pageSize , pageSize)
+	if err != nil {
+		return nil, err
+	}
+	var books []*model.Book
+	for rows.Next() {
+		book := &model.Book{}
+		rows.Scan(&book.Id, &book.Title, &book.Author, &book.Price, &book.Sales, &book.Stock, &book.ImgPath)
+		//将book添加到books中
+		books = append(books, book)
+	}
+	//创建page
+	page := &model.Page{
+		Books:       books,
+		PageNo:      iPageNo,
+		PageSize:    pageSize,
+		TotalPageNo: totalPageNo,
+		TotalRecord: totalRecord,
+	}
+	return page, nil
 }
