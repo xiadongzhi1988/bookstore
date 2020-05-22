@@ -7,6 +7,8 @@ type Page struct {
 	PageSize int64 //每页显示的条数
 	TotalPageNo int64 //总页数,通过计算得到
 	TotalRecord int64 //总记录数,通过查询数据库得到
+	MinPrice string
+	MaxPrice string
 }
 
 //IsHasPrev 判断是否有上一页

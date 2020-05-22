@@ -7,7 +7,7 @@ import (
 
 
 func main() {
-	// 31
+	// 32
 	//设置处理静态资源
 	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(http.Dir("views/static/"))))
 	http.Handle("/pages/", http.StripPrefix("/pages/", http.FileServer(http.Dir("views/pages/"))))
@@ -22,6 +22,8 @@ func main() {
 	//http.HandleFunc("/getBooks", controller.GetBooks)
 	//获取带分页的图书信息
 	http.HandleFunc("/getPageBooks", controller.GetPageBooks)
+	//
+	http.HandleFunc("/getPageBooksByPrice", controller.GetPageBooksByPrice)
 	//添加图书
 	//http.HandleFunc("/addBook", controller.AddBook)
 	//删除图书
@@ -30,5 +32,6 @@ func main() {
 	http.HandleFunc("/toUpdateBookPage", controller.ToUpdateBookPage)
 	//更新或添加图书
 	http.HandleFunc("/updateOraddBook", controller.UpdateOrAddBook)
+
 	http.ListenAndServe(":8080", nil)
 }
